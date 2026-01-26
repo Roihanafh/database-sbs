@@ -1,6 +1,7 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
+import { MESSAGES } from '@nestjs/core/constants';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -21,20 +22,21 @@ export class UsersController {
 
     //get user by id
     @Get(':id')
-    getUserById() {
-        return this.usersService.findOne;
+    getUserById(@Param('id') id: number) {
+        return this.usersService.findOne(id);
     }
 
     //update user by id
-    @Patch(':id')
-    updateUser() {
-        return this.usersService.update;
-    }
-    
-    //delete user by id
-    @Delete(':id')
-    deleteUser() {
-        return this.usersService.remove;
+    @Patch('update/:id')
+    async updateUser(@Param('id') id: number, @Body() updateUserDto: Partial<CreateUserDto>) {
+        await this.usersService.update(id, updateUserDto);
+        return { message: 'User updated successfully' };
     }
 
+    //delete user by id
+    @Delete('delete/:id')
+    async deleteUser(@Param('id') id: number) {
+        await this.usersService.remove(id);
+        return { message: 'User deleted successfully' };
+    }
 }
