@@ -15,7 +15,8 @@ export class UsersService {
     //create user
     async create(createUserDto: CreateUserDto): Promise<Users> {
         const newUser = this.usersRepository.create(createUserDto);
-        return this.usersRepository.save(newUser);
+        const savedUser = await this.usersRepository.save(newUser);
+        return plainToInstance(Users, savedUser);
     }
 
     //get all users
@@ -54,6 +55,7 @@ export class UsersService {
 
     //find user by email
     async findUserByEmail(email: string): Promise<Users | null>  {
-        return this.usersRepository.findOneBy({ email });
+        const user = await this.usersRepository.findOneBy({ email });
+        return plainToInstance(Users, user);
     }
 }

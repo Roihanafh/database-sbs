@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { Users } from './users/entity/users.entity';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { ProductsEntity } from './products/entity/products.entity';
 
 @Module({
   imports: [
@@ -19,13 +21,14 @@ import { AuthModule } from './auth/auth.module';
         username: ConfigService.get<string>('DB_USERNAME'),
         password: ConfigService.get<string>('DB_PASSWORD'),
         database: ConfigService.get<string>('DB_DATABASE'),
-        entities: [Users],
+        entities: [Users, ProductsEntity],
         synchronize: false,
       }),
       inject: [ConfigService],
     }),
     AuthModule,
     UsersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
