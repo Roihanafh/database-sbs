@@ -32,7 +32,17 @@ export class UsersService {
 
     //update user by id
     async update(id: number, updateUserDto: Partial<CreateUserDto>): Promise<Users> {
-        await this.usersRepository.update(id, updateUserDto);
+        // Check if user exists
+        const user = await this.usersRepository.findOneBy({ id });
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // Only update if there are fields to update
+        if (updateUserDto && Object.keys(updateUserDto).length > 0) {
+            await this.usersRepository.update(id, updateUserDto);
+        }
+
         const updatedUser = await this.usersRepository.findOneBy({ id });
         return plainToInstance(Users, updatedUser);
     }
