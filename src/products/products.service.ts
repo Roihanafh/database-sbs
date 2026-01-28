@@ -15,13 +15,17 @@ export class ProductsService {
 
     //get all products
     async findAll(): Promise<ProductsEntity[]> {
-        const products = await this.productsRepository.find();
+        const products = await this.productsRepository.find(
+            { relations: ['category'] }
+        );
         return plainToInstance(ProductsEntity, products);
     }
 
     //get product by id
     async findOne(id: number): Promise<ProductsEntity> {
-        const product = await this.productsRepository.findOneBy({ id });
+        const product = await this.productsRepository.findOne(
+            { where: { id }, relations: ['category'] }
+        );
         return plainToInstance(ProductsEntity, product);    
     }
 

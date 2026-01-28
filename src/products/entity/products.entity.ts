@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from "class-transformer";
+import { CategoriesEntity } from "src/categories/entity/categories.entity";
+import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('products')
@@ -17,4 +19,16 @@ export class ProductsEntity {
 
     @Column()
     stock: number;
+
+    @ManyToOne(() => CategoriesEntity)
+    @JoinColumn({ name: "category_id" })
+    @Exclude()
+    category: CategoriesEntity;
+
+    categoryName: string;
+
+    @AfterLoad()
+    setCategoryName() {
+        this.categoryName = this.category.name;
+    }
 }
