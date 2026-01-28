@@ -10,6 +10,9 @@ import { ProductsModule } from './products/products.module';
 import { ProductsEntity } from './products/entity/products.entity';
 import { CategoriesModule } from './categories/categories.module';
 import { CategoriesEntity } from './categories/entity/categories.entity';
+import { SalesModule } from './sales/sales.module';
+import { SalesEntity } from './sales/entity/sales.entity';
+import { SalesDetailsEntity } from './sales/entity/sales-details.entity';
 
 @Module({
   imports: [
@@ -23,7 +26,7 @@ import { CategoriesEntity } from './categories/entity/categories.entity';
         username: ConfigService.get<string>('DB_USERNAME'),
         password: ConfigService.get<string>('DB_PASSWORD'),
         database: ConfigService.get<string>('DB_DATABASE'),
-        entities: [Users, ProductsEntity, CategoriesEntity],
+        entities: [Users, ProductsEntity, CategoriesEntity, SalesEntity, SalesDetailsEntity],
         synchronize: false,
       }),
       inject: [ConfigService],
@@ -32,6 +35,7 @@ import { CategoriesEntity } from './categories/entity/categories.entity';
     UsersModule,
     ProductsModule,
     CategoriesModule,
+    SalesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
