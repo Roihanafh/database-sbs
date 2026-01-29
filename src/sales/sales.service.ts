@@ -17,6 +17,9 @@ export class SalesService {
         @InjectRepository(SalesDetailsEntity)
         private salesDetailsRepository: Repository<SalesDetailsEntity>,
 
+        @InjectRepository(ProductsEntity)
+        private productsRepository: Repository<ProductsEntity>,
+
     ) { }
 
     async findAll(): Promise<SalesEntity[]> {
@@ -32,12 +35,18 @@ export class SalesService {
 
     async create(createSaleDto: CreateSaleDto): Promise<SalesEntity | undefined | null> {
         const sale_id = await this.findOneByDate(createSaleDto.sale_date);
+        
+        const product = await this.productsRepository.findOneBy({ id: createSaleDto.product_id });
+        if (!product) {
+            throw new Error('Product not found');
+        }
+        const price = product.price * createSaleDto.qty;
 
         if (!sale_id) {
             const sale = this.salesRepository.create({
                 sale_date: createSaleDto.sale_date,
                 user: { id: createSaleDto.user_id },
-                total_amount: createSaleDto.price
+                total_amount: price
             });
             const savedSale = await this.salesRepository.save(sale);
 
@@ -45,7 +54,7 @@ export class SalesService {
                 sales: { id: savedSale.id },
                 product:{ id: createSaleDto.product_id},
                 qty: createSaleDto.qty,
-                price: createSaleDto.price
+                price: price
             });
             await this.salesDetailsRepository.save(saleDetails);
 
@@ -54,14 +63,14 @@ export class SalesService {
 
         const existingSale = await this.findOne(sale_id);
         if (existingSale) {
-            existingSale.total_amount += createSaleDto.price;
+            existingSale.total_amount += price;
             await this.salesRepository.save(existingSale);
 
             const saleDetails = this.salesDetailsRepository.create({
                 sales: { id: existingSale.id },
                 product:{ id: createSaleDto.product_id},
                 qty: createSaleDto.qty,
-                price: createSaleDto.price
+                price: price
             });
             await this.salesDetailsRepository.save(saleDetails);
         }

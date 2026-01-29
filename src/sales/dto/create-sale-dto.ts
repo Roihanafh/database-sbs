@@ -18,10 +18,6 @@ export class CreateSaleDto {
 
     @IsNotEmpty()
     @IsNumber()
-    price: number;
-
-    @IsNotEmpty()
-    @IsNumber()
     user_id: number;
 
 }
